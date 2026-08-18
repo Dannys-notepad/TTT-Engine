@@ -1,0 +1,14 @@
+{
+  "name": "ttt-engine",
+  "version": "1.0.0",
+  "description": "A tic tac toe game engine and playing AI",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "dev": "node --watch main.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
