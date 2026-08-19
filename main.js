@@ -8,7 +8,9 @@ import {
     isLegalMove,
     playATurn,
     checkWin
-} from './functions.js' 
+} from './functions.js'
+
+import { easyAI } from './ai.js'
 
 const rl = readline.createInterface({
     input: stdin,
@@ -19,10 +21,10 @@ const rl = readline.createInterface({
 let playerScores
 
 function changePLayer (turn) {
-    let play = `player1 (O)`
+    let play = `player1 (X)`
 
     if (turn % 2 === 0) {
-        return `player2 (X)`
+        return `player2 (O)`
     }
 
     return play
@@ -45,8 +47,30 @@ async function main (scores) {
         Payer 2: ${gameSpace.playerScores.player2.wins} wins, ${gameSpace.playerScores.player2.loses} loses
         Draws: ${gameSpace.playerScores.draws}
         `
-        console.log(gameSpace.playersGameBoard)
+
+        let a1 = typeof gameSpace.gameBoardMapping.a[1] === 'number' ? ' ' : gameSpace.gameBoardMapping.a[1]
+        let a2 = typeof gameSpace.gameBoardMapping.a[2] === 'number' ? ' ' : gameSpace.gameBoardMapping.a[2]
+        let a3 = typeof gameSpace.gameBoardMapping.a[3] === 'number' ? ' ' : gameSpace.gameBoardMapping.a[3]
+
+        let b1 = typeof gameSpace.gameBoardMapping.b[1] === 'number' ? ' ' : gameSpace.gameBoardMapping.b[1]
+        let b2 = typeof gameSpace.gameBoardMapping.b[2] === 'number' ? ' ' : gameSpace.gameBoardMapping.b[2]
+        let b3 = typeof gameSpace.gameBoardMapping.b[3] === 'number' ? ' ' : gameSpace.gameBoardMapping.b[3]
+
+        let c1 = typeof gameSpace.gameBoardMapping.c[1] === 'number' ? ' ' : gameSpace.gameBoardMapping.c[1]
+        let c2 = typeof gameSpace.gameBoardMapping.c[2] === 'number' ? ' ' : gameSpace.gameBoardMapping.c[2]
+        let c3 = typeof gameSpace.gameBoardMapping.c[3] === 'number' ? ' ' : gameSpace.gameBoardMapping.c[3]
+        
+        let board = `
+            
+        1   2    3
+    a [ ${a1} | ${a2} | ${a3} ]
+    b [ ${b1} | ${b2} | ${b3} ]
+    c [ ${c1} | ${c2} | ${c3} ]
+            
+            `
+        
         console.log(gameStats)
+        console.log(board)
 
         while (true) {
             turn++
@@ -108,8 +132,13 @@ async function main (scores) {
             }
 
             logPlayer = changePLayer(turn)
-            rawInput = await rl.question(`${logPlayer} Enter your play space: `)
 
+            if (turn % 2 === 0) {
+                rawInput = easyAI(gameSpace.gameBoardMapping)
+            } else {
+                rawInput = await rl.question(`${logPlayer} Enter your play space: `)
+            }
+            
             const input = rawInput.trim()
 
             if (input === 'exit') {
@@ -119,13 +148,35 @@ async function main (scores) {
 
             const playerInput = normalizePlayerInputs(input)
 
-            if (playerInput.length === 4) {
+            if (playerInput.length === 2) {
 
                 if (isLegalMove(gameSpace.gameBoardMapping, playerInput)) {
 
                     player = turn % 2 === 0 ? 'o' : 'x'
-                    playATurn(playerInput, player, gameSpace.gameBoardMapping, gameSpace.playersGameBoard)
-                    console.log(gameSpace.playersGameBoard)
+                    playATurn(playerInput, player, gameSpace.gameBoardMapping)
+
+                    a1 = typeof gameSpace.gameBoardMapping.a[1] === 'number' ? ' ' : gameSpace.gameBoardMapping.a[1]
+                    a2 = typeof gameSpace.gameBoardMapping.a[2] === 'number' ? ' ' : gameSpace.gameBoardMapping.a[2]
+                    a3 = typeof gameSpace.gameBoardMapping.a[3] === 'number' ? ' ' : gameSpace.gameBoardMapping.a[3]
+
+                    b1 = typeof gameSpace.gameBoardMapping.b[1] === 'number' ? ' ' : gameSpace.gameBoardMapping.b[1]
+                    b2 = typeof gameSpace.gameBoardMapping.b[2] === 'number' ? ' ' : gameSpace.gameBoardMapping.b[2]
+                    b3 = typeof gameSpace.gameBoardMapping.b[3] === 'number' ? ' ' : gameSpace.gameBoardMapping.b[3]
+
+                    c1 = typeof gameSpace.gameBoardMapping.c[1] === 'number' ? ' ' : gameSpace.gameBoardMapping.c[1]
+                    c2 = typeof gameSpace.gameBoardMapping.c[2] === 'number' ? ' ' : gameSpace.gameBoardMapping.c[2]
+                    c3 = typeof gameSpace.gameBoardMapping.c[3] === 'number' ? ' ' : gameSpace.gameBoardMapping.c[3]
+        
+                    board = `
+            
+        1   2    3
+    a [ ${a1} | ${a2} | ${a3} ]
+    b [ ${b1} | ${b2} | ${b3} ]
+    c [ ${c1} | ${c2} | ${c3} ]
+            
+            `
+
+                    console.log(board)
 
                 } else {
 
@@ -152,7 +203,7 @@ console.log(`
 
     TIK TAK TOE Game
 
-    
+
         1     2     3
     a [' ' | ' ' | ' ']
     b [' ' | ' ' | ' ']
@@ -160,19 +211,19 @@ console.log(`
 
     Above is a sample game board and below are the play commands to enter
 
-    rw11 = first row, first column
-    rw12 = first row, second column
-    rw13 = first row, third column
+    a1 = first row, first column
+    a2 = first row, second column
+    a3 = first row, third column
 
-    rw21 = second row, first column
-    rw22 = second row, second column
-    rw23 = second row, third column
+    b1 = second row, first column
+    b2 = second row, second column
+    b3 = second row, third column
 
-    rw31 = third row, first column
-    rw32 = third row, second column
-    rw33 = third row, third column
+    c1 = third row, first column
+    c2 = third row, second column
+    c3 = third row, third column
 
-    Note: player 1 and 2 are automatically 'o' and 'x' respectively
+    Note: player 1 and 2 are automatically 'o' and 'x' respectively, also the ingame ai is automatically player 2
 
 `)
 
